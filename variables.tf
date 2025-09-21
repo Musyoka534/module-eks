@@ -30,11 +30,21 @@ variable "project_name" {
   description = "The base name for resources"
   type        = string
 }
-variable "node_groups" {
+variable "on-demand-node-groups" {
+  description = "EKS node groups"
+  type        = map(any)
+}
+variable "spot-instance-node-groups" {
   description = "EKS node groups"
   type        = map(any)
 }
 variable "tags" {
   description = "Common tags to be applied to all resources"
   type        = map(string)
+}
+variable "addons" {
+  type = list(object({
+    name    = string
+    version = string
+  }))
 }

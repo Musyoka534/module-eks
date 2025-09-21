@@ -1,0 +1,47 @@
+name: Tag on Version Change
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+  push:
+    branches: [ main, master ]
+    paths: [ 'metadata.yaml' ]
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install yq
+        uses: mikefarah/yq@v4.44.2
+
+      - name: Get version from metadata.yaml
+        id: get_version
+        run: |
+          VERSION=$(yq '.version' metadata.yaml)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Validate version (check if tag exists)
+        run: |
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "❌ Version v$VERSION already exists — bump metadata.yaml before merging."
+            exit 1
+          else
+            echo "✅ Version v$VERSION is new."
+          fi
+
+      - name: Tag and push (only after merge to main/master)
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
