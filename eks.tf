@@ -1,6 +1,6 @@
 # Create EKS cluster IAM role
 resource "aws_iam_role" "eks" {
-  name               = "${var.project_name}-${terraform.workspace}-${var.eks_name}-iam-role"
+  name               = "${local.eks_cluster_name}-iam-role"
   assume_role_policy = <<POLICY
     {
   "Version": "2012-10-17",
@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "eks" {
 }
 
 resource "aws_eks_cluster" "this" {
-  name     = "${var.project_name}-${terraform.workspace}-${var.eks_name}-cluster"
+  name     = local.eks_cluster_name
   role_arn = aws_iam_role.eks.arn
   vpc_config {
     subnet_ids              = var.subnet_ids
@@ -34,7 +34,7 @@ resource "aws_eks_cluster" "this" {
     bootstrap_cluster_creator_admin_permissions = true
 
   }
-
+  tags       = merge({ "Name" = local.eks_cluster_name }, local.tags)
   depends_on = [aws_iam_role_policy_attachment.eks]
 
 }

@@ -27,9 +27,8 @@ resource "aws_eks_node_group" "on-demand-nodes" {
     role = each.key
     type = "ondemand"
   }
-  tags = merge(var.tags, {
-    Name = "devsecops-${each.key}-${terraform.workspace}-on-demand-nodes"
-
+  tags = merge(local.tags, {
+    Name = "${local.prefix}-${each.key}-on-demand-nodes"
   })
 
   depends_on = [aws_iam_role_policy_attachment.nodes]
@@ -59,11 +58,11 @@ resource "aws_eks_node_group" "spot-node" {
     max_unavailable = 1
   }
   tags = {
-    "Name" = "${var.eks_name}-spot-nodes"
+    "Name" = "${local.prefix}-spot-nodes"
   }
   tags_all = {
-    "kubernetes.io/cluster/${var.eks_name}" = "owned"
-    "Name"                                  = "${var.eks_name}-spot-nodes"
+    "kubernetes.io/cluster/${local.eks_cluster_name}" = "owned"
+    "Name"                                            = "${local.eks_cluster_name}-spot-nodes"
   }
   labels = {
     type      = "spot"
