@@ -1,10 +1,10 @@
-variable "eks_name" {
-  description = "Name of the cluster"
-  type        = string
-}
 variable "eks_version" {
   description = "Desired Kubernetes master version."
   type        = string
+}
+variable "eks_id" {
+  description = "EKS ID. Numeric ID (1-5) to identify this EKS implementation"
+  type        = number
 }
 variable "subnet_ids" {
   description = "List of subnet IDs. Must be in at least two different availability zones."
@@ -25,11 +25,6 @@ variable "enable_irsa" {
   type        = bool
   default     = true
 }
-# Project name Variable
-variable "project_name" {
-  description = "The base name for resources"
-  type        = string
-}
 variable "on-demand-node-groups" {
   description = "EKS node groups"
   type        = map(any)
@@ -38,13 +33,31 @@ variable "spot-instance-node-groups" {
   description = "EKS node groups"
   type        = map(any)
 }
-variable "tags" {
-  description = "Common tags to be applied to all resources"
-  type        = map(string)
-}
 variable "addons" {
   type = list(object({
-    name    = string
-    version = string
+    name = string
   }))
 }
+variable "stage" {
+  description = "Development stage. Use either dev/test/acc/prod"
+  type        = string
+}
+variable "country_code" {
+  description = "Country code, specifies for which country this environment is being run. (e.g. ken/tz/ug)"
+  type        = string
+}
+
+variable "project" {
+  description = "Project name"
+  type        = string
+}
+variable "owner" {
+  description = "Team that owns the project"
+  type        = string
+}
+
+variable "application" {
+  description = "The application name"
+  type        = string
+}
+

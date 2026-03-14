@@ -1,5 +1,5 @@
 resource "aws_iam_role" "nodes" {
-  name = "${var.project_name}-${terraform.workspace}-${var.eks_name}-nodes-role"
+  name = "${local.eks_cluster_name}-nodes-role"
 
   assume_role_policy = jsonencode({
     Statement = [{
